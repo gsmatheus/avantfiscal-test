@@ -649,6 +649,12 @@ $userRoleText = $userRole === 'admin' ? 'Administrador' : 'Usuário';
             }
         });
 
+        document.getElementById('participateModal').addEventListener('click', function (event) {
+            if (event.target === this) {
+                closeParticipateModal();
+            }
+        });
+
         let roomToDelete = null;
         let reservationToCancel = null;
 

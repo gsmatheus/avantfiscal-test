@@ -3,6 +3,8 @@ $(document).ready(function() {
     $('#createRoomForm').on('submit', handleCreateRoom);
     $('#roomName').on('input', debounce(handleSearch, 300));
     $('#roomNameMobile').on('input', debounce(handleSearchMobile, 300));
+    
+    $(document).on('submit', '#participateForm', handleParticipate);
 });
 function showSkeletonLoader() {
     const roomsList = $('#roomsList');
@@ -582,11 +584,17 @@ function debounce(func, delay) {
 }
 function handleParticipate(event) {
     event.preventDefault();
-    const formData = new FormData(this);
-    const submitBtn = this.querySelector('button[type="submit"]');
+    event.stopPropagation();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
+    
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i data-lucide="loader" class="h-4 w-4 mr-2 inline animate-spin"></i>Participando...';
+    lucide.createIcons();
+    
     $.ajax({
         url: '../../app/api/reservations/create.php',
         method: 'POST',
@@ -595,7 +603,7 @@ function handleParticipate(event) {
         contentType: false,
         success: function (response) {
             if (response.success) {
-                showAlert(response.message, 'success');
+                showAlert(response.message || 'Participação realizada com sucesso!', 'success');
                 closeParticipateModal();
                 loadRooms();
             } else {
