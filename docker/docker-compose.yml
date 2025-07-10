@@ -1,0 +1,50 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: avant_app
+    restart: unless-stopped
+    ports:
+      - "8050:80"
+    volumes:
+      - ../app:/var/www/html/app
+      - ../backend:/var/www/html/backend
+      - ../uploads:/var/www/html/uploads
+      - ../index.php:/var/www/html/index.php
+      - ../.htaccess:/var/www/html/.htaccess
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=sistema_reservas
+      - DB_USER=avant_user
+      - DB_PASS=avant123
+      - DB_PORT=3306
+    networks:
+      - avant_network
+
+  db:
+    image: mysql:8.0
+    container_name: avant_db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: sistema_reservas
+      MYSQL_USER: avant_user
+      MYSQL_PASSWORD: avant123
+    volumes:
+      - db_data:/var/lib/mysql
+      - ../backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - avant_network
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  avant_network:
+    driver: bridge
