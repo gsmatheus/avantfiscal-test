@@ -104,20 +104,38 @@ function renderRooms(rooms) {
         let actionButtons = '';
         let orientationInfo = null;
         if (isAdmin) {
+            const hasParticipants = (room.active_participants || 0) > 0;
+            const viewReservationsButton = hasParticipants ? `
+                <button onclick="openViewReservationsModal(${room.id}, '${escapeHtml(room.name)}')" 
+                    class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+                    <i data-lucide="calendar" class="h-4 w-4 mr-1 inline"></i>
+                    Reservas
+                </button>
+            ` : '';
+            
+            const viewReservationsButtonMobile = hasParticipants ? `
+                <button onclick="openViewReservationsModal(${room.id}, '${escapeHtml(room.name)}')" 
+                    class="w-8 h-8 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center">
+                    <i data-lucide="calendar" class="h-4 w-4 text-blue-600"></i>
+                </button>
+            ` : '';
+            
             actionButtons = `
                 <!-- Desktop/Tablet -->
-                <div class="hidden md:flex items-center">
+                <div class="hidden md:flex items-center space-x-3">
+                    ${viewReservationsButton}
                     <button onclick="editRoom(${room.id})" 
                         class="px-14 py-3 text-base font-bold text-gray-900 bg-white border border-gray-300 rounded-[60px] hover:bg-gray-50 transition-colors">
                         Editar
                     </button>
                     <button onclick="deleteRoom(${room.id})" 
-                        class="w-12 h-12 bg-red-500 hover:bg-red-600 rounded-xl text-white flex items-center justify-center transition-colors ml-4">
+                        class="w-12 h-12 bg-red-500 hover:bg-red-600 rounded-xl text-white flex items-center justify-center transition-colors">
                         <i data-lucide="trash" class="h-5 w-5"></i>
                     </button>
                 </div>
                 <!-- Mobile -->
                 <div class="md:hidden flex items-center space-x-2">
+                    ${viewReservationsButtonMobile}
                     <button onclick="editRoom(${room.id})" 
                         class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                         <i data-lucide="edit-2" class="h-4 w-4"></i>
@@ -610,4 +628,176 @@ function handleParticipate(event) {
             lucide.createIcons();
         }
     });
+}
+
+function openViewReservationsModal(roomId, roomName) {
+    document.getElementById('viewReservationsRoomName').textContent = `Reservas da sala: ${roomName}`;
+    
+    const modal = document.getElementById('viewReservationsModal');
+    const modalContent = document.getElementById('viewReservationsModalContent');
+
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    setTimeout(() => {
+        modalContent.classList.remove('scale-95', 'opacity-0');
+        modalContent.classList.add('scale-100', 'opacity-100');
+        adjustModalPosition();
+        lucide.createIcons();
+        loadRoomReservations(roomId);
+    }, 10);
+}
+
+function closeViewReservationsModal() {
+    const modal = document.getElementById('viewReservationsModal');
+    const modalContent = document.getElementById('viewReservationsModalContent');
+
+    modalContent.classList.remove('scale-100', 'opacity-100');
+    modalContent.classList.add('scale-95', 'opacity-0');
+
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }, 300);
+}
+
+function loadRoomReservations(roomId) {
+    const reservationsList = document.getElementById('reservationsList');
+    const noReservationsMessage = document.getElementById('noReservationsMessage');
+    const reservationsLoading = document.getElementById('reservationsLoading');
+
+    reservationsList.innerHTML = '';
+    noReservationsMessage.classList.add('hidden');
+    reservationsLoading.classList.remove('hidden');
+
+    $.ajax({
+        url: `../../app/api/reservations/?room_id=${roomId}`,
+        method: 'GET',
+        success: function(response) {
+            reservationsLoading.classList.add('hidden');
+            
+            if (response.success && response.data && response.data.length > 0) {
+                const reservations = response.data;
+                renderReservations(reservations);
+            } else {
+                noReservationsMessage.classList.remove('hidden');
+            }
+        },
+        error: function() {
+            reservationsLoading.classList.add('hidden');
+            noReservationsMessage.classList.remove('hidden');
+            showAlert('Erro ao carregar reservas', 'error');
+        }
+    });
+}
+
+function renderReservations(reservations) {
+    const reservationsList = document.getElementById('reservationsList');
+    
+    reservations.forEach((reservation, index) => {
+        const startDate = new Date(reservation.start_time);
+        const endDate = new Date(reservation.end_time);
+        const now = new Date();
+        
+        const formatDate = (date) => {
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        };
+        
+        const formatTime = (date) => {
+            return date.toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        };
+
+        const isPast = endDate < now;
+        const isCurrent = startDate <= now && endDate >= now;
+        
+        let statusBadge = '';
+        if (isPast) {
+            statusBadge = '<span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">Finalizada</span>';
+        } else if (isCurrent) {
+            statusBadge = '<span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-600 rounded-full">Em andamento</span>';
+        } else {
+            statusBadge = '<span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-600 rounded-full">Agendada</span>';
+        }
+
+        const reservationCard = `
+            <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:bg-gray-100 transition-colors">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                ${reservation.user_name.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900">${escapeHtml(reservation.user_name)}</h4>
+                                <p class="text-sm text-gray-500">${escapeHtml(reservation.user_email)}</p>
+                            </div>
+                            ${statusBadge}
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="calendar" class="h-4 w-4 text-gray-400"></i>
+                                <span class="text-gray-700">
+                                    <strong>Início:</strong> ${formatDate(startDate)} às ${formatTime(startDate)}
+                                </span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="clock" class="h-4 w-4 text-gray-400"></i>
+                                <span class="text-gray-700">
+                                    <strong>Fim:</strong> ${formatDate(endDate)} às ${formatTime(endDate)}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        ${reservation.description ? `
+                            <div class="mt-3 p-3 bg-white rounded-lg border border-gray-200">
+                                <p class="text-sm text-gray-700">${escapeHtml(reservation.description)}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        reservationsList.innerHTML += reservationCard;
+    });
+    
+    lucide.createIcons();
+} 
+
+function adjustModalPosition() {
+    const modal = document.getElementById('viewReservationsModal');
+    if (modal && !modal.classList.contains('hidden')) {
+        const modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+            let padding = '16px';
+            if (window.innerHeight < 500) {
+                padding = '4px';
+            } else if (window.innerHeight < 600) {
+                padding = '8px';
+            } else if (window.innerWidth >= 640) {
+                padding = '32px';
+            } else if (window.innerWidth <= 768 && window.innerHeight <= 720) {
+                padding = '12px';
+            }
+
+            if (window.innerWidth <= 480) {
+                modalContent.style.width = 'calc(100vw - 8px)';
+                modalContent.style.maxWidth = 'calc(100vw - 8px)';
+            } else {
+                modalContent.style.width = '100%';
+                modalContent.style.maxWidth = '';
+            }
+
+            modalContent.style.maxHeight = `calc(100vh - ${padding})`;
+            modal.scrollTop = 0;
+        }
+    }
 } 

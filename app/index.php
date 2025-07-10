@@ -515,6 +515,51 @@ $userRoleText = $userRole === 'admin' ? 'Administrador' : 'Usuário';
         </div>
     </div>
 
+    <!-- Modal Visualizar Reservas -->
+    <div id="viewReservationsModal"
+        class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm modal-container z-50 hidden transition-all duration-300">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-4xl modal-content relative shadow-2xl transform transition-all duration-300 scale-95 opacity-0"
+            id="viewReservationsModalContent">
+            <!-- Header do Modal -->
+            <div class="relative px-4 sm:px-8 py-4 sm:py-6 border-b border-gray-100">
+                <div class="flex items-center justify-center mb-3 sm:mb-4">
+                    <div
+                        class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i data-lucide="calendar" class="h-6 w-6 sm:h-8 sm:w-8 text-white"></i>
+                    </div>
+                </div>
+                <h3 class="text-xl sm:text-2xl font-bold text-gray-900 text-center">Reservas da Sala</h3>
+                <p class="text-sm sm:text-base text-gray-600 text-center mt-2 px-2" id="viewReservationsRoomName">Visualizando todas as reservas</p>
+                <button onclick="closeViewReservationsModal()"
+                    class="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors group">
+                    <i data-lucide="x" class="h-4 w-4 sm:h-5 sm:w-5 text-gray-500 group-hover:text-gray-700"></i>
+                </button>
+            </div>
+
+            <!-- Conteúdo do Modal -->
+            <div class="px-4 sm:px-8 py-6 sm:py-8">
+                <div id="reservationsList" class="space-y-4">
+                    <!-- Reservas serão carregadas aqui -->
+                </div>
+                
+                <div id="noReservationsMessage" class="text-center py-8 hidden">
+                    <i data-lucide="calendar-x" class="h-12 w-12 text-gray-300 mx-auto mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhuma reserva encontrada</h3>
+                    <p class="text-gray-500">Esta sala ainda não possui reservas agendadas.</p>
+                </div>
+
+                <div id="reservationsLoading" class="text-center py-8">
+                    <div class="inline-flex items-center space-x-2">
+                        <div class="w-4 h-4 bg-orange-500 rounded-full animate-bounce"></div>
+                        <div class="w-4 h-4 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                        <div class="w-4 h-4 bg-orange-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                    </div>
+                    <p class="text-gray-500 mt-2">Carregando reservas...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
@@ -741,25 +786,10 @@ $userRoleText = $userRole === 'admin' ? 'Administrador' : 'Usuário';
             }, 300);
         }
 
-        document.getElementById('participateModal').addEventListener('click', function (event) {
-            if (event.target === this) {
-                closeParticipateModal();
-            }
-        });
 
-        document.getElementById('participateForm').addEventListener('submit', handleParticipate);
-
-        document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape') {
-                closeModal();
-                closeDeleteModal();
-                closeCancelReservationModal();
-                closeParticipateModal();
-            }
-        });
 
         function adjustModalPosition() {
-            const modals = ['createRoomModal', 'deleteConfirmModal', 'cancelReservationModal', 'participateModal'];
+            const modals = ['createRoomModal', 'deleteConfirmModal', 'cancelReservationModal', 'participateModal', 'viewReservationsModal'];
 
             modals.forEach(modalId => {
                 const modal = document.getElementById(modalId);
