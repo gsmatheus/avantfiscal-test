@@ -49,4 +49,7 @@ $includeTailwindConfig = $includeTailwindConfig ?? false;
         }
     </script>
     <?php endif; ?>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/air-datepicker@3.3.5/air-datepicker.css">
+    <script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.3.5/air-datepicker.min.js"></script>
 </head> 

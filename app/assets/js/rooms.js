@@ -588,6 +588,31 @@ function handleParticipate(event) {
     
     const form = event.target;
     const formData = new FormData(form);
+    
+    const startTime = formData.get('start_time');
+    const endTime = formData.get('end_time');
+    
+    if (!startTime || !endTime) {
+        showAlert('Por favor, selecione as datas de início e fim', 'error');
+        return;
+    }
+    
+    const startDate = convertBrazilianDateToISO(startTime);
+    const endDate = convertBrazilianDateToISO(endTime);
+    
+    if (!startDate || !endDate) {
+        showAlert('Formato de data inválido. Use o formato dd/mm/yyyy hh:mm', 'error');
+        return;
+    }
+    
+    if (new Date(startDate) >= new Date(endDate)) {
+        showAlert('A data de término deve ser depois da data de início', 'error');
+        return;
+    }
+    
+    formData.set('start_time', startDate);
+    formData.set('end_time', endDate);
+    
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     
@@ -636,6 +661,14 @@ function handleParticipate(event) {
             lucide.createIcons();
         }
     });
+}
+
+function convertBrazilianDateToISO(dateTimeString) {
+    const match = dateTimeString.match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
+    if (!match) return null;
+    
+    const [, day, month, year, hour, minute] = match;
+    return `${year}-${month}-${day}T${hour}:${minute}:00`;
 }
 
 function openViewReservationsModal(roomId, roomName) {

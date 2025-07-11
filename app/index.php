@@ -299,9 +299,9 @@ include_once __DIR__ . '/includes/head.php';
                             <div class="relative">
                                 <i data-lucide="calendar"
                                     class="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400"></i>
-                                <input type="datetime-local" id="startTime" name="start_time"
-                                    class="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100"
-                                    required>
+                                <input type="text" id="startTime" name="start_time" readonly
+                                    class="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100 cursor-pointer"
+                                    placeholder="Selecione a data e hora de início" required>
                             </div>
                         </div>
 
@@ -311,9 +311,9 @@ include_once __DIR__ . '/includes/head.php';
                             <div class="relative">
                                 <i data-lucide="calendar"
                                     class="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400"></i>
-                                <input type="datetime-local" id="endTime" name="end_time"
-                                    class="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100"
-                                    required>
+                                <input type="text" id="endTime" name="end_time" readonly
+                                    class="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 hover:bg-gray-100 cursor-pointer"
+                                    placeholder="Selecione a data e hora de fim" required>
                             </div>
                         </div>
                     </div>
@@ -598,14 +598,6 @@ include_once __DIR__ . '/includes/head.php';
             document.getElementById('participateRoomName').textContent = `Participar em: ${roomName}`;
             document.getElementById('participateRoomId').value = roomId;
 
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const minDateTime = `${year}-${month}-${day}T00:00`;
-            document.getElementById('startTime').min = minDateTime;
-            document.getElementById('endTime').min = minDateTime;
-
             const modal = document.getElementById('participateModal');
             const modalContent = document.getElementById('participateModalContent');
 
@@ -617,6 +609,7 @@ include_once __DIR__ . '/includes/head.php';
                 modalContent.classList.add('scale-100', 'opacity-100');
                 adjustModalPosition();
                 lucide.createIcons();
+                initializeDatepickers();
             }, 10);
         }
 
@@ -632,6 +625,7 @@ include_once __DIR__ . '/includes/head.php';
                 document.body.style.overflow = 'auto';
                 roomToParticipate = null;
                 document.getElementById('participateForm').reset();
+                destroyDatepickers();
             }, 300);
         }
 
@@ -670,6 +664,76 @@ include_once __DIR__ . '/includes/head.php';
                     }
                 }
             });
+        }
+
+        let startDatepicker, endDatepicker;
+
+        function initializeDatepickers() {
+            const now = new Date();
+            const minDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            const datepickerOptions = {
+                locale: {
+                    days: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+                    daysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                    daysMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'],
+                    months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                    monthsShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    today: 'Hoje',
+                    clear: 'Limpar',
+                    dateFormat: 'dd/MM/yyyy',
+                    timeFormat: 'HH:mm',
+                    firstDay: 1
+                },
+                dateFormat: 'dd/MM/yyyy',
+                timepicker: true,
+                timeFormat: 'HH:mm',
+                minDate: minDate,
+                autoClose: true,
+                classes: 'air-datepicker-custom',
+                onSelect: function(formattedDate, date, inst) {
+                    if (inst.el.id === 'startTime') {
+                        if (endDatepicker && date) {
+                            endDatepicker.update({
+                                minDate: date
+                            });
+                        }
+                    }
+                }
+            };
+
+            startDatepicker = new AirDatepicker('#startTime', {
+                ...datepickerOptions,
+                onSelect: function(formattedDate, date, inst) {
+                    if (endDatepicker && date) {
+                        endDatepicker.update({
+                            minDate: date
+                        });
+                    }
+                }
+            });
+
+            endDatepicker = new AirDatepicker('#endTime', {
+                ...datepickerOptions,
+                onSelect: function(formattedDate, date, inst) {
+                    if (startDatepicker && date) {
+                        startDatepicker.update({
+                            maxDate: date
+                        });
+                    }
+                }
+            });
+        }
+
+        function destroyDatepickers() {
+            if (startDatepicker) {
+                startDatepicker.destroy();
+                startDatepicker = null;
+            }
+            if (endDatepicker) {
+                endDatepicker.destroy();
+                endDatepicker = null;
+            }
         }
 
         window.addEventListener('resize', adjustModalPosition);
