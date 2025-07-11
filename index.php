@@ -4,33 +4,12 @@ require_once __DIR__ . '/backend/config/config.php';
 if (isAuthenticated()) {
     redirect('app/index.php');
 }
+
+$isRootPage = true;
+include_once __DIR__ . '/app/includes/page-config.php';
+setPageConfig(getLoginConfig());
+include_once __DIR__ . '/app/includes/head.php';
 ?>
-<!DOCTYPE html>
-<html lang="pt-br">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login | Sistema de Reservas</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <link rel="stylesheet" href="app/assets/css/animations.css">
-
-    <link rel="icon" href="https://avantfiscal.com.br/wp-content/uploads/2022/03/favicon-avant-fiscal-2022.svg"
-        sizes="32x32" />
-    <link rel="icon" href="https://avantfiscal.com.br/wp-content/uploads/2022/03/favicon-avant-fiscal-2022.svg"
-        sizes="192x192" />
-    <link rel="apple-touch-icon"
-        href="https://avantfiscal.com.br/wp-content/uploads/2022/03/favicon-avant-fiscal-2022.svg" />
-    <meta name="msapplication-TileImage"
-        content="https://avantfiscal.com.br/wp-content/uploads/2022/03/favicon-avant-fiscal-2022.svg" />
-
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
 
 <body class="min-h-screen bg-white font-sans">
     <div class="flex flex-col md:flex-row min-h-screen w-full items-center justify-center px-2">
@@ -167,11 +146,7 @@ if (isAuthenticated()) {
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="app/assets/js/app.js"></script>
-    <script src="app/assets/js/utils.js"></script>
-    <script src="app/assets/js/auth.js?v=<?php echo time(); ?>"></script>
+    <?php include_once __DIR__ . '/app/includes/scripts.php'; ?>
 
     <script>
         let isLoginMode = true;

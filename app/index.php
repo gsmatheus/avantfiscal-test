@@ -7,172 +7,19 @@ $userName = $_SESSION['user_name'] ?? '';
 $userEmail = $_SESSION['user_email'] ?? '';
 $userRole = $_SESSION['user_role'] ?? '';
 $userRoleText = $userRole === 'admin' ? 'Administrador' : 'Usuário';
+
+$isRootPage = false;
+include_once __DIR__ . '/includes/page-config.php';
+setPageConfig(getDashboardConfig());
+include_once __DIR__ . '/includes/head.php';
 ?>
-<!DOCTYPE html>
-<html lang="pt-br">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard | Sistema de Reservas</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-
-    <link rel="icon" href="https://avantfiscal.com.br/wp-content/uploads/2022/03/favicon-avant-fiscal-2022.svg"
-        sizes="32x32" />
-    <link rel="icon" href="https://avantfiscal.com.br/wp-content/uploads/2022/03/favicon-avant-fiscal-2022.svg"
-        sizes="192x192" />
-    <link rel="apple-touch-icon"
-        href="https://avantfiscal.com.br/wp-content/uploads/2022/03/favicon-avant-fiscal-2022.svg" />
-    <meta name="msapplication-TileImage"
-        content="https://avantfiscal.com.br/wp-content/uploads/2022/03/favicon-avant-fiscal-2022.svg" />
-
-    <link rel="stylesheet" href="assets/css/animations.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'orange': {
-                            500: '#FB6206',
-                            600: '#E55A00'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .modal-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-
-        .modal-content {
-            max-height: calc(100vh - 16px);
-            overflow-y: auto;
-            width: 100%;
-            margin: auto;
-            box-sizing: border-box;
-            position: relative;
-        }
-
-        @media (min-width: 640px) {
-            .modal-container {
-                padding: 16px;
-            }
-
-            .modal-content {
-                max-height: calc(100vh - 32px);
-            }
-        }
-
-        @media (max-height: 600px) {
-            .modal-content {
-                max-height: calc(100vh - 8px);
-            }
-
-            .modal-container {
-                padding: 4px;
-            }
-        }
-
-        @media (max-height: 500px) {
-            .modal-content {
-                max-height: calc(100vh - 4px);
-            }
-
-            .modal-container {
-                padding: 2px;
-            }
-        }
-
-        /* Garantir que o modal sempre caiba na tela */
-        @media (max-width: 480px) {
-            .modal-content {
-                width: calc(100vw - 8px);
-                max-width: calc(100vw - 8px);
-            }
-        }
-
-        /* Ajustes para notebooks pequenos */
-        @media (max-width: 768px) and (max-height: 720px) {
-            .modal-content {
-                max-height: calc(100vh - 12px);
-            }
-
-            .modal-container {
-                padding: 6px;
-            }
-        }
-    </style>
+    <?php include_once __DIR__ . '/includes/modal-styles.php'; ?>
 </head>
 
 <body class="min-h-screen bg-white font-sans">
     <div class="min-h-screen flex flex-col">
         <!-- Header -->
-        <header class="bg-gray-50 border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
-                    <div class="flex items-center hidden sm:block">
-                        <img src="assets/images/logo.png" alt="Sistema de Reservas" class="h-[40px]" />
-                    </div>
-
-                    <div class="flex items-center space-x-6">
-                        <a href="#" class="text-orange-500 hover:text-orange-600 font-bold">Início</a>
-                    </div>
-                    <div class="relative">
-                        <button onclick="toggleDropdown()"
-                            class="flex items-center space-x-2 hover:bg-gray-100 rounded-lg p-2 transition-colors">
-                            <span class="text-sm text-gray-700"><?php echo htmlspecialchars($userName); ?></span>
-                            <div
-                                class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                                <?php echo strtoupper(substr($userName, 0, 1)); ?>
-                            </div>
-                            <i data-lucide="chevron-down" class="h-4 w-4 text-gray-500"></i>
-                        </button>
-
-                        <div id="userDropdown"
-                            class="absolute right-0 mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-lg border border-gray-200 hidden z-50">
-                            <div class="p-4 border-b border-gray-100">
-                                <div class="flex items-start space-x-3">
-                                    <div
-                                        class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-white font-medium flex-shrink-0">
-                                        <?php echo strtoupper(substr($userName, 0, 1)); ?>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <div class="font-medium text-gray-900 truncate">
-                                            <?php echo htmlspecialchars($userName); ?>
-                                        </div>
-                                        <div class="text-sm text-gray-500 break-all">
-                                            <?php echo htmlspecialchars($userEmail); ?>
-                                        </div>
-                                        <div class="text-xs text-gray-400 mt-1">
-                                            <?php echo htmlspecialchars($userRoleText); ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="p-2">
-                                <button onclick="logout()"
-                                    class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md flex items-center space-x-2 transition-colors">
-                                    <i data-lucide="log-out" class="h-4 w-4"></i>
-                                    <span>Sair</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <?php include_once __DIR__ . '/includes/header.php'; ?>
 
         <!-- Main Content -->
         <main class="flex-1 py-8">
@@ -561,11 +408,7 @@ $userRoleText = $userRole === 'admin' ? 'Administrador' : 'Usuário';
     </div>
 
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <script src="assets/js/app.js"></script>
-    <script src="assets/js/utils.js"></script>
-    <script src="assets/js/rooms.js?v=<?php echo time(); ?>"></script>
+    <?php include_once __DIR__ . '/includes/scripts.php'; ?>
     <script>
         const userRole = '<?php echo $userRole; ?>';
         const userName = '<?php echo htmlspecialchars($userName); ?>';
