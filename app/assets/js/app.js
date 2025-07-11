@@ -13,6 +13,12 @@ $(document).ready(function() {
             extend: {
                 fontFamily: {
                     'sans': ['Inter', 'system-ui', 'sans-serif'],
+                },
+                colors: {
+                    'orange': {
+                        500: '#FB6206',
+                        600: '#E55A00'
+                    }
                 }
             }
         }

@@ -1,7 +1,6 @@
 <?php
 $pageTitle = $pageTitle ?? 'Sistema de Reservas';
 $includeAnimations = $includeAnimations ?? false;
-$includeTailwindConfig = $includeTailwindConfig ?? false;
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -33,22 +32,7 @@ $includeTailwindConfig = $includeTailwindConfig ?? false;
 
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <?php if ($includeTailwindConfig): ?>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'orange': {
-                            500: '#FB6206',
-                            600: '#E55A00'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <?php endif; ?>
+
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/air-datepicker@3.3.5/air-datepicker.css">
     <script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.3.5/air-datepicker.min.js"></script>
