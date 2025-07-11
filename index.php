@@ -198,6 +198,7 @@ if (isAuthenticated()) {
                 localStorage.removeItem('remember_checked');
             }
 
+            document.getElementById('hiddenEmail').value = '';
             document.getElementById('rememberedUserCard').classList.add('hidden');
             document.getElementById('emailInputContainer').classList.remove('hidden');
 

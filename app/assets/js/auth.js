@@ -4,8 +4,8 @@ $(document).ready(function() {
     loadRememberedCredentials();
 
     $(document).on('click', '#switchUserBtn', function() {
-        showEmailInput();
         clearRememberedCredentials();
+        showEmailInput();
         $('#remember').prop('checked', false);
     });
 
@@ -22,8 +22,10 @@ $(document).ready(function() {
         
         const formData = new FormData(this);
         
-        if ($('#hiddenEmail').val()) {
+        if ($('#hiddenEmail').val() && !$('#emailInput').val()) {
             formData.set('email', $('#hiddenEmail').val());
+        } else if ($('#emailInput').val()) {
+            formData.set('email', $('#emailInput').val());
         }
         
         const basePath = window.location.pathname.includes('/app/') ? 'api/auth/' : 'app/api/auth/';
@@ -135,7 +137,7 @@ function handleRememberMe(formData) {
     } else if (formMode === 'login' && !rememberChecked) {
         clearRememberedCredentials();
     } else if (formMode === 'register') {
-        const email = $('#emailInput').val() || $('#hiddenEmail').val();
+        const email = $('#emailInput').val();
         
         if (email) {
             localStorage.setItem('remember_email', email);
@@ -160,6 +162,7 @@ function showRememberedUserCard(email) {
     $('#userInitials').text(initials);
     $('#rememberedEmail').text(email);
     $('#hiddenEmail').val(email);
+    $('#emailInput').val('');
     
     $('#emailInput').removeAttr('required');
     $('#hiddenEmail').attr('required', 'required');
@@ -172,6 +175,8 @@ function showEmailInput() {
     $('#emailInput').attr('required', 'required');
     $('#hiddenEmail').removeAttr('required');
     
+    $('#hiddenEmail').val('');
+    
     $('#rememberedUserCard').addClass('hidden');
     $('#emailInputContainer').removeClass('hidden');
     $('#emailInput').focus();
@@ -180,4 +185,6 @@ function showEmailInput() {
 function clearRememberedCredentials() {
     localStorage.removeItem('remember_email');
     localStorage.removeItem('remember_checked');
+    
+    $('#hiddenEmail').val('');
 } 
