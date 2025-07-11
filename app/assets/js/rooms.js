@@ -284,8 +284,8 @@ function renderRooms(rooms) {
     });
     setTimeout(() => {
         roomsList.find('.fade-in-up').removeClass('opacity-0');
+        lucide.createIcons();
     }, 50);
-    lucide.createIcons();
 }
 function handleCreateRoom(event) {
     event.preventDefault();
@@ -337,7 +337,6 @@ function handleCreateRoom(event) {
         },
         complete: function() {
             submitBtn.prop('disabled', false).html(originalText);
-            lucide.createIcons();
         }
     });
 }
@@ -374,7 +373,6 @@ function openEditModal(room) {
     setTimeout(() => {
         modalContent.classList.remove('scale-95', 'opacity-0');
         modalContent.classList.add('scale-100', 'opacity-100');
-        lucide.createIcons();
     }, 10);
 }
 function handleUpdateRoom(event, roomId) {
@@ -428,7 +426,6 @@ function handleUpdateRoom(event, roomId) {
         },
         complete: function() {
             submitBtn.prop('disabled', false).html(originalText);
-            lucide.createIcons();
         }
     });
 }
@@ -462,7 +459,6 @@ function executeDelete(roomId) {
             deleteBtn.prop('disabled', false).html(originalHtml);
         },
         complete: function() {
-            lucide.createIcons();
         }
     });
 }
@@ -487,7 +483,6 @@ function executeCancelReservation(reservationId) {
         },
         complete: function() {
             btn.prop('disabled', false).html(originalHtml);
-            lucide.createIcons();
         }
     });
 }
@@ -618,7 +613,6 @@ function handleParticipate(event) {
     
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i data-lucide="loader" class="h-4 w-4 mr-2 inline animate-spin"></i>Participando...';
-    lucide.createIcons();
     
     $.ajax({
         url: '../../app/api/reservations/create.php',
@@ -658,7 +652,6 @@ function handleParticipate(event) {
         complete: function () {
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
-            lucide.createIcons();
         }
     });
 }
@@ -684,7 +677,6 @@ function openViewReservationsModal(roomId, roomName) {
         modalContent.classList.remove('scale-95', 'opacity-0');
         modalContent.classList.add('scale-100', 'opacity-100');
         adjustModalPosition();
-        lucide.createIcons();
         loadRoomReservations(roomId);
     }, 10);
 }
@@ -810,7 +802,6 @@ function renderReservations(reservations) {
         reservationsList.innerHTML += reservationCard;
     });
     
-    lucide.createIcons();
 } 
 
 function adjustModalPosition() {

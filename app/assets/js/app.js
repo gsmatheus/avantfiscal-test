@@ -49,8 +49,6 @@ function showAlert(message, type = 'info') {
     
     document.body.appendChild(alertContainer);
     
-    lucide.createIcons();
-    
     setTimeout(() => {
         alertContainer.classList.remove('translate-x-full');
     }, 10);
