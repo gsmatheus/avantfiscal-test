@@ -21,14 +21,14 @@ class ReservationValidator {
             $end = new DateTime($endTime);
             $now = new DateTime();
             if ($start <= $now) {
-                $errors['start_time'] = 'Data/hora de início deve ser futura';
+                $errors['start_time'] = 'A data e hora de início não pode ser no passado';
             }
             if ($end <= $start) {
-                $errors['end_time'] = 'Data/hora de fim deve ser posterior ao início';
+                $errors['end_time'] = 'A data de término deve ser depois da data de início';
             }
             $diffInHours = ($end->getTimestamp() - $start->getTimestamp()) / 3600;
             if ($diffInHours > 8) {
-                $errors['duration'] = 'Duração máxima da reserva é de 8 horas';
+                $errors['duration'] = 'A reserva pode durar no máximo 8 horas';
             }
         }
         if (!empty($description) && strlen($description) > 500) {
