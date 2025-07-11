@@ -44,9 +44,11 @@ function showAlert(message, type = 'info') {
     };
     
     alertContainer.innerHTML = `
-        <div class="rounded-lg shadow-lg p-4 ${alertColors[type]} flex items-center space-x-3">
-            <i data-lucide="${alertIcons[type]}" class="h-5 w-5 flex-shrink-0"></i>
-            <span class="text-sm font-medium">${message}</span>
+        <div class="rounded-lg shadow-lg p-4 ${alertColors[type]} flex items-center space-x-3 justify-between">
+            <div class="flex items-center space-x-3">
+                <i data-lucide="${alertIcons[type]}" class="h-5 w-5 flex-shrink-0"></i>
+                <span class="text-sm font-medium">${message}</span>
+            </div>
             <button onclick="this.parentElement.parentElement.remove()" class="ml-auto">
                 <i data-lucide="x" class="h-4 w-4"></i>
             </button>
@@ -54,6 +56,8 @@ function showAlert(message, type = 'info') {
     `;
     
     document.body.appendChild(alertContainer);
+    
+    lucide.createIcons();
     
     setTimeout(() => {
         alertContainer.classList.remove('translate-x-full');
