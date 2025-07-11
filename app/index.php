@@ -468,7 +468,7 @@ include_once __DIR__ . '/includes/head.php';
                 url: '../../app/api/auth/logout.php',
                 method: 'POST',
                 success: function (response) {
-                    window.location.href = '../../index.php';
+                    window.location.href = '/';
                 },
                 error: function () {
                     alert('Erro ao fazer logout');

@@ -1,7 +1,7 @@
 <?php
 
 define('APP_NAME', 'Sistema de Reservas');
-define('APP_URL', 'http://localhost/avant/_novo');
+define('APP_URL', 'http://localhost:8000');
 define('APP_VERSION', '1.0.0');
 
 define('SESSION_NAME', 'reserva_session');
@@ -52,7 +52,7 @@ function requireAuth() {
 function requireAdmin() {
     requireAuth();
     if (!isAdmin()) {
-        redirect('/app/index.php');
+        redirect('/app\/');
     }
 }
 

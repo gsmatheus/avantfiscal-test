@@ -50,7 +50,7 @@ $(document).ready(function() {
                     showAlert(response.message, 'success');
                     
                     setTimeout(function() {
-                        window.location.href = 'app/index.php';
+                        window.location.href = 'app/';
                     }, 1000);
                 } else {
                     handleErrors(response);
@@ -85,7 +85,7 @@ function checkAuthStatus() {
         method: 'GET',
         success: function(response) {
             if (response.success) {
-                window.location.href = 'app/index.php';
+                window.location.href = 'app/';
             }
         },
         error: function() {

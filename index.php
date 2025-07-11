@@ -2,7 +2,7 @@
 require_once __DIR__ . '/backend/config/config.php';
 
 if (isAuthenticated()) {
-    redirect('app/index.php');
+    redirect('app/');
 }
 
 $isRootPage = true;
