@@ -1,86 +1,53 @@
-[![Logotipo-Avant-Fiscal-Horizontal-2.png](https://i.postimg.cc/JnSjmqgk/Logotipo-Avant-Fiscal-Horizontal-2.png)](https://postimg.cc/R6QWLcvS)
+# Sistema de Reservas
 
-# Desafio Técnico: Sistema de Reserva de Salas de Reunião
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/6ae7a1c5-983d-4f4e-98b8-285c447379c9" />
 
-## Descrição
-Este desafio técnico consiste em desenvolver um sistema de reserva de salas de reunião para uma empresa, utilizando PHP puro e MySQL. O sistema deve permitir que os usuários se registrem e façam login, e que os administradores gerenciem as salas de reunião. Usuários autenticados devem poder visualizar a disponibilidade das salas e fazer reservas.
+## 📋 Sobre o Projeto
 
-**Requisitos:**
-- **PHP Puro:** Não utilize frameworks de PHP.
-- **Conexão com Banco de Dados:** A conexão com o banco de dados será fornecida pela Avant Fiscal, portanto, o candidato deve se preocupar apenas com o código.
+Este é um **desafio técnico** desenvolvido para a **Avant Fiscal**, consistindo em um sistema completo de reserva de salas de reunião desenvolvido em **PHP puro** e **MySQL**.
 
-**Opcional:**
-- **Arquitetura Separada:** Criar o Backend separado do Frontend.
-- **Frontend:**
-  - Utilizar JavaScript e jQuery para funcionalidades dinâmicas.
-  - Para estilização, utilizar Bootstrap ou TailwindCSS.
-  - Não utilizar frameworks de frontend. O desenvolvimento do frontend deve ser feito apenas com PHP, HTML, JavaScript e os estilos mencionados acima.
+### 🎯 Funcionalidades Implementadas
 
-Esta abordagem assegura um código mais enxuto e um melhor entendimento das tecnologias envolvidas, sem a complexidade adicional de frameworks.
+- ✅ **Autenticação**: Cadastro, login e diferentes níveis de acesso (admin/user)
+- ✅ **Gerenciamento de Salas**: CRUD completo para administradores
+- ✅ **Sistema de Reservas**: Visualização de disponibilidade e criação de reservas
+- ✅ **Validações**: Campos obrigatórios, unicidade de email, conflitos de horário
+- ✅ **Segurança**: Proteção SQL Injection, controle de acesso
+- ✅ **Interface Moderna**: Frontend responsivo com Tailwind CSS e JavaScript
 
 
-## Funcionalidades
-Esse desafio precisa obrigatoriamente implementar essas funcionalidades abaixo, fique a vontade para adicionar mais funcionalidades que agregem ao projeto sem mudar o objetivo principal da aplicação.
+## 🚀 Como Rodar
 
+### Opção 1: Testar Online
+Acesse: https://avant.gsmatheus.com/
 
-- **Cadastro de Usuários**
-  - Registro de novos usuários.
-  - Login de usuários existentes.
-  - Diferentes níveis de acesso (administrador e usuário comum).
+### Opção 2: Docker (Mais Fácil)
+```bash
+cd docker
+chmod +x start.sh
+./start.sh
+```
+Acesse: http://localhost:8050
 
-- **Gerenciamento de Salas**
-  - Administradores podem criar, atualizar e excluir salas de reunião.
-  - Informações das salas incluem nome, capacidade e localização.
+### Opção 3: PHP Built-in Server
+```bash
+# 1. Configure o banco MySQL
+mysql -u root -p < backend/database/init.sql
 
-- **Reserva de Salas**
-  - Usuários podem visualizar a disponibilidade das salas.
-  - Usuários podem fazer reservas especificando sala, data, hora de início e término.
+# 2. Configure as credenciais em backend/database/database.php
+# (host, dbname, username, password, port)
 
-- **Validações**
-  - Campos obrigatórios devem ser preenchidos.
-  - Verificação de unicidade de email.
-  - Garantia de que uma sala não pode ser reservada por mais de um usuário no mesmo horário.
+# 3. Inicie o servidor
+php -S localhost:8080
 
-- **Segurança**
-  - Proteção contra SQL Injection.
-  - Acesso às páginas de gerenciamento restrito a usuários autenticados.
-
-## Estrutura Sugerida do Banco de Dados
-(Fique livre para criar sua estrutura com outras tabelas caso ache necessario).
-
-```sql
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    access_level ENUM('admin', 'user') NOT NULL DEFAULT 'user',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE rooms (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    capacity INT NOT NULL,
-    location VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE reservations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    room_id INT NOT NULL,
-    user_id INT NOT NULL,
-    start_time DATETIME NOT NULL,
-    end_time DATETIME NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
+# 4. Acesse
+http://localhost:8080
 ```
 
-## Entrega do projeto
-- Faça um fork do projeto.
-- Crie uma nova branch com o seu nome e sobrenome ex: joao-souza: git checkout -b nome-sobrenome.
-- Faça commit das suas alterações: git commit -m 'Minha nova feature'.
-- Faça push para a branch: git push origin nome-sobrenome.
-- Abra um Pull Request.
+## 👤 Login Padrão
+- **Email**: admin@sistema.com
+- **Senha**: password
+
+---
+
+**Desenvolvido como desafio técnico para [Avant Fiscal](https://avantfiscal.com.br/)**
